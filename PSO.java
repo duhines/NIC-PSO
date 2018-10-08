@@ -1,8 +1,10 @@
+
 public class PSO {
 
     public static void main(String[] args) {
-        // Prints "Hello, World" to the terminal window.
-        System.out.println("PSO time");
+        //each member of args is a command line argument
+        System.out.println("PSO time!");
+        
     }
 
 }
