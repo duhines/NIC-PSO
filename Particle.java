@@ -164,6 +164,11 @@ public class Particle {
 		else if (benchmark == "ack") {
 			curr_value = eval_ackley(dimensions);
 		}
+		//update p_best value and location
+		if (curr_value > p_best_value) {
+			p_best = location;
+			p_best_value = curr_value;
+		}
 		return curr_value;
 	}
 
