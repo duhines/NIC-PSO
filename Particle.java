@@ -6,6 +6,9 @@ Particle Class for the PSO algorithm:
 */
 
 //for an N dimentional problem:
+
+import java.util.Random;
+
 public class Particle {
 
 	public double[] location; //array of the particle of N dimensions
@@ -13,7 +16,7 @@ public class Particle {
 	public double[] p_best; // Vector that points towards p_best
 	public double p_best_value; // Value of current p_best
 
-	Random random = new Random();
+    Random random = new Random();
 	
 	public Particle() {}; // Default constructor; should never be used!
 
@@ -25,7 +28,7 @@ public class Particle {
 		// Fill velocity and location vectors with values in appropriate ranges:
 		for (int i = 0; i < dimension; i ++) {
 			
-			if (benchmark == "rok") { // ranges for Rosenbrock
+			if (benchmark.equals("rok")) { // ranges for Rosenbrock
 				// generate location values in range  [15.0, 30.0]
 				// format: double result = start + (random.nextDouble() * (end - start));
 				location[i] = 15.0 + (random.nextDouble() * (30.0 - 15.0));
@@ -33,7 +36,7 @@ public class Particle {
 				//generate velocity values in range [-2.0, 2.0]
 				velocity[i] = -2.0 + (random.nextDouble() * (2.0 + 2.0));
 			}
-			else if (benchmark == "ras") { // Ranges for Rastrigin
+			else if (benchmark.equals("ras")) { // Ranges for Rastrigin
 				//generate location values in range [2.56, 5.12]
 				location[i] = 2.56 + (random.nextDouble() * (5.12 - 2.56));
 
@@ -92,7 +95,7 @@ public class Particle {
 	}
 
 	// Generates random "u-vectors" or bias vectors to be used in PSO velocity update
-	private double[] generate_u_vector(int arrLen, upperBound) {
+	private double[] generate_u_vector(int arrLen, double upperBound) {
 		double[] u_vector = new double[arrLen];
 		for (int i = 0; i < arrLen; i ++) {
 			// Generate a random number in the range [0, upperBound]
@@ -116,7 +119,7 @@ public class Particle {
 		double[] p_best_weight = piecewise_multiplication(u1, piecewise_subtraction(location, p_best));
 		double[] g_and_p_best_weight = piecewise_addition(g_best_weight, p_best_weight);
 		double[] unconstricted_velocity = piecewise_addition(velocity, g_and_p_best_weight);
-		velocity = scalar_multiplication(chi, unconstricted_velocity);		
+		velocity = scalar_mult(unconstricted_velocity, chi);		
 	}
 
 	/**
@@ -147,25 +150,26 @@ public class Particle {
 	}
 
 	public double eval_rastrigin(int dimensions) {
-		sum = 0;
-		for (i = 0; i < dimensions; i ++) {
+		double sum = 0;
+		for (int i = 0; i < dimensions; i ++) {
 			sum += Math.pow(location[i], 2) - 10*Math.cos(2*Math.PI*location[i]) + 10;
 		}
 		return sum;
 	}
 
 	public double eval(int dimensions, String benchmark) {
-		if (benchmark == "rok") {
+		double curr_value;
+		if (benchmark.equals("rok")) {
 			curr_value = eval_rosenbrock(dimensions);
 		}
-		else if (benchmark == "ras") {
+		else if (benchmark.equals("ras")) {
 			curr_value = eval_rastrigin(dimensions);
 		}
-		else if (benchmark == "ack") {
+		else {
 			curr_value = eval_ackley(dimensions);
 		}
 		//update p_best value and location
-		if (curr_value > p_best_value) {
+		if (curr_value <= p_best_value) {
 			p_best = location;
 			p_best_value = curr_value;
 		}
