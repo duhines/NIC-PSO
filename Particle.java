@@ -12,6 +12,7 @@ import java.util.Random;
 public class Particle {
 
 	public double[] location; //array of the particle of N dimensions
+	public double current_val;
 	public double[] velocity; //vector of particle's velocity in N dimensions
 	public double[] p_best; // Vector that points towards p_best
 	public double p_best_value; // Value of current p_best
@@ -87,11 +88,11 @@ public class Particle {
 	}
 
 	// Helper function allowing us to do scalar multiplication of arrays:
-	private double[] scalar_mult(double[] arr1, double scalar) {
-		for (int i = 0; i < arr1.length; i ++) {
-			arr1[i] = arr1[i] * scalar;
+	private double[] scalar_mult(double[] vector, double scalar) {
+		for (int i = 0; i < vector.length; i ++) {
+			vector[i] = vector[i] * scalar;
 		}
-		return arr1;
+		return vector;
 	}
 
 	// Generates random "u-vectors" or bias vectors to be used in PSO velocity update
@@ -109,17 +110,23 @@ public class Particle {
 	* phi values (biases), and the dimensionality of the problem
 	*/
 	public void update_velocity(double[] g_best, double chi, double phi1, double phi2, int dimension) {
+
 		double[] u1 = generate_u_vector(dimension, phi1); // Generate vector with values from 0 to phi1
 		double[] u2 = generate_u_vector(dimension, phi2); // Generate vector with values from 0 to phi2
-
+	
 		// Update velocity. Implements PSO Vi+1 update algorithm where:
 		// Vi+1 = chi(Vi + u1*(Xi - Pi) + u2*(Xi - Ni)), where u1 and u2 are
 		// bias vectors and chi is a constrictor.
-		double[] g_best_weight = piecewise_multiplication(u2, piecewise_subtraction(location, g_best));
-		double[] p_best_weight = piecewise_multiplication(u1, piecewise_subtraction(location, p_best));
+		double[] g_best_weight = piecewise_multiplication(u2, piecewise_subtraction(g_best, location));
+		double[] p_best_weight = piecewise_multiplication(u1, piecewise_subtraction(p_best, location));
 		double[] g_and_p_best_weight = piecewise_addition(g_best_weight, p_best_weight);
 		double[] unconstricted_velocity = piecewise_addition(velocity, g_and_p_best_weight);
-		velocity = scalar_mult(unconstricted_velocity, chi);		
+		velocity = scalar_mult(unconstricted_velocity, chi);	
+		for (int i = 0; i < velocity.length; i++) {
+			if (velocity[i] > 100) {velocity[i] = 100;}
+			if (velocity[i] < -100) {velocity[i] = -100;}
+		}
+
 	}
 
 	/**
@@ -134,7 +141,7 @@ public class Particle {
 		double right_sum = 0;
 		for (int i = 0; i < dimensions; i ++) {
 			left_sum += Math.pow(location[i], 2);
-			right_sum += Math.cos(2*Math.PI*location[i]);
+			right_sum += Math.cos(2.0*Math.PI*location[i]);
 		}
 		left_sum = left_sum / dimensions;
 		right_sum = right_sum / dimensions;
@@ -144,14 +151,15 @@ public class Particle {
 	public double eval_rosenbrock(int dimensions) {
 		double sum = 0;
 		for (int i = 0; i < dimensions - 1; i ++) {
-			sum += 100*(location[i+1] - Math.pow(location[i], 2) + Math.pow(location[i] - 1, 2));
+			sum += 100*Math.pow(location[i+1] - Math.pow(location[i], 2), 2) + Math.pow(location[i] - 1, 2);
 		}
 		return sum;
+
 	}
 
 	public double eval_rastrigin(int dimensions) {
 		double sum = 0;
-		for (int i = 0; i < dimensions; i ++) {
+		for (int i = 0; i < dimensions - 1; i ++) {
 			sum += Math.pow(location[i], 2) - 10*Math.cos(2*Math.PI*location[i]) + 10;
 		}
 		return sum;
@@ -173,6 +181,7 @@ public class Particle {
 			p_best = location;
 			p_best_value = curr_value;
 		}
+		current_val = curr_value;
 		return curr_value;
 	}
 
