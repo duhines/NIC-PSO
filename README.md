@@ -6,7 +6,8 @@ This project implements a PSO algorithm with 4 different neighborhood topologies
 
 To run the algorithm, first compile the java class files.
 Then, run the PSO class file with the following arguments:
-	java PSO <swarm size> <number of iterations> <benchmark> <topology>
+
+	java PSO swarm size, number of iterations, benchmark, topology
 	
 	Swarm size: integer values > 0
 	Number of iterations: integer value > 0
