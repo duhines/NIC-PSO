@@ -5,6 +5,7 @@ Course: Nature-inspired computation fall 2018
 Date: 10/16/2018
 Description:
 	PSO Class for the PSO algorithm that implements PSO algorithm methods.
+
 	Methods implement the following functionalities: 
 		- find the best current particle value in the swarm
 		- global PSO algorithm
@@ -13,6 +14,9 @@ Description:
 		- get neighborhoods
 		- update neighborhoods
 		- main
+
+	This PSO algorithm implements 4 different nighborhood topologies and 
+	
 */
 
 import java.util.Arrays;
@@ -147,10 +151,9 @@ public class PSO {
 		}
 		return periodic_results;
 	}
-	
+
 	public static double[] init_PSO(int swarm_size, int iterations, int dimensions, 
 		String benchmark, String topology) {
-
 		// Initialize an array of particles that will serve as our swarm:
 		Particle[] swarm = new Particle[swarm_size];
 		for(int i = 0; i < swarm.length; i++) {
@@ -251,6 +254,4 @@ public class PSO {
 
         init_PSO(swarm_size, iterations, dimensionality, benchmark, topology);
     }
-
-
 }

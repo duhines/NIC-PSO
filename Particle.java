@@ -16,6 +16,9 @@ Description:
 		- updating velocity based on PSO algorithm
 		- updating particle location based on velocity
 		- evaluating Rosenbrock, Ackley, and Rastrigin benchmark functions
+	This version of PSO implements 3 benchmark functions for testing (Ackley,
+	Rastrigin, and Rosenbrock) and 4 different neighborhood topologies (global,
+	ring, von Neumann, and random).
 */
 
 
